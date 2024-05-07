@@ -23,7 +23,7 @@ const containerRef = ref<HTMLElement>()
 const isTab = ref(true)
 
 const handleResize = () => {
-  isTab.value = containerRef.value.offsetWidth > 810
+  isTab.value = !!containerRef.value && containerRef.value.offsetWidth > 970
 }
 
 onMounted(() => {
@@ -48,6 +48,7 @@ const { allowCSVDownload } = useSharedView()
     </template>
     <template v-else>
       <LazySmartsheetToolbarMappedBy v-if="isMap" />
+      <LazySmartsheetToolbarCalendarHeader v-if="isCalendar" />
       <LazySmartsheetToolbarCalendarRange v-if="isCalendar" />
 
       <LazySmartsheetToolbarFieldsMenu
@@ -57,14 +58,23 @@ const { allowCSVDownload } = useSharedView()
 
       <LazySmartsheetToolbarStackedBy v-if="isKanban" />
 
-      <LazySmartsheetToolbarColumnFilterMenu v-if="isGrid || isGallery || isKanban || isMap || isCalendar" />
+      <LazySmartsheetToolbarColumnFilterMenu v-if="isGrid || isGallery || isKanban || isMap" />
 
       <LazySmartsheetToolbarGroupByMenu v-if="isGrid" />
 
-      <LazySmartsheetToolbarSortListMenu v-if="isGrid || isGallery || isKanban || isCalendar" />
+      <LazySmartsheetToolbarSortListMenu v-if="isGrid || isGallery || isKanban" />
 
+      <!--
       <div v-if="isCalendar && isTab" class="flex-1" />
-      <LazySmartsheetToolbarCalendarMode v-if="isCalendar" v-model:tab="isTab" />
+-->
+      <div
+        :class="{
+          'absolute inset-x-0': isTab,
+        }"
+        class="flex items-center justify-center"
+      >
+        <LazySmartsheetToolbarCalendarMode v-if="isCalendar" v-model:tab="isTab" />
+      </div>
 
       <template v-if="!isMobileMode">
         <LazySmartsheetToolbarRowHeight v-if="isGrid" />
@@ -83,6 +93,7 @@ const { allowCSVDownload } = useSharedView()
           'w-full': isMobileMode,
         }"
       />
+      <LazySmartsheetToolbarCalendarToday v-if="isCalendar" />
     </template>
   </div>
 </template>

@@ -183,7 +183,7 @@ const getMaxOverlaps = ({
 
   const dayIndex = row.rowMeta.dayIndex
   const overlapIndex = columnArray[dayIndex].findIndex((column) => column.findIndex((r) => r.rowMeta.id === id) !== -1) + 1
-
+  console.log(row.row[displayField.value?.title], columnArray[dayIndex].length)
   const dfs = (id: string): number => {
     visited.add(id)
     let maxOverlaps = 1
@@ -196,6 +196,8 @@ const getMaxOverlaps = ({
         }
       }
     }
+    console.log(maxOverlaps)
+
     return maxOverlaps
   }
 
@@ -478,7 +480,11 @@ const recordsAcrossAllRange = computed<{
       }
     }
     for (const record of recordsToDisplay) {
-      const { maxOverlaps, overlapIndex } = getMaxOverlaps({
+      const {
+        maxOverlaps,
+        overlapIndex,
+        dayIndex: tDayIndex,
+      } = getMaxOverlaps({
         row: record,
         columnArray,
         graph: graph.get(record.rowMeta.dayIndex!) ?? new Map(),
@@ -867,7 +873,7 @@ watch(
 <template>
   <div
     ref="scrollContainer"
-    class="h-[calc(100vh-9.9rem)] prevent-select relative flex w-full overflow-y-auto nc-scrollbar-md"
+    class="h-[calc(100vh-6.25rem)] prevent-select relative flex w-full overflow-y-auto nc-scrollbar-md"
     data-testid="nc-calendar-week-view"
     @drop="dropEvent"
   >
