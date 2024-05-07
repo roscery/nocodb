@@ -607,7 +607,11 @@ export default {
               size="xsmall"
               @click="copyRecordUrl()"
             >
-              <div v-e="['c:row-expand:copy-url']" data-testid="nc-expanded-form-copy-url" class="flex gap-2 items-center text-small">
+              <div
+                v-e="['c:row-expand:copy-url']"
+                data-testid="nc-expanded-form-copy-url"
+                class="flex gap-2 items-center text-small"
+              >
                 <component :is="iconMap.check" v-if="isRecordLinkCopied" class="cursor-pointer nc-duplicate-row" />
                 <component :is="iconMap.copy" v-else class="cursor-pointer nc-duplicate-row" />
                 {{ isRecordLinkCopied ? $t('labels.copiedRecordURL') : $t('labels.copyRecordURL') }}
@@ -861,7 +865,7 @@ export default {
 
           <div
             v-if="isUIAllowed('dataEdit')"
-            class="w-full h-16 border-t-1 border-gray-200 bg-white flex items-center justify-end p-3 xs:(p-0 mt-4 border-t-0 gap-x-4 justify-between)"
+            class="w-full border-t-1 border-gray-200 bg-white flex items-center justify-end px-2 py-[9px] xs:(p-0 mt-4 border-t-0 gap-x-4 justify-between)"
           >
             <NcDropdown v-if="!isNew && isMobileMode" placement="bottomRight">
               <NcButton :disabled="isLoading" class="nc-expand-form-more-actions w-10" type="secondary">
@@ -902,7 +906,7 @@ export default {
                 v-if="isMobileMode"
                 class="nc-expand-form-save-btn !xs:(text-base)"
                 data-testid="nc-expanded-form-save"
-                size="medium"
+                :size="isMobileMode ? 'medium' : 'small'"
                 type="secondary"
                 @click="onClose"
               >
@@ -915,10 +919,10 @@ export default {
                 class="nc-expand-form-save-btn !xs:(text-base)"
                 data-testid="nc-expanded-form-save"
                 type="primary"
-                size="medium"
+                :size="isMobileMode ? 'medium' : 'small'"
                 @click="save"
               >
-                <div class="xs:px-1">Save</div>
+                <div class="xs:px-1">Save changes</div>
               </NcButton>
             </div>
           </div>
