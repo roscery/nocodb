@@ -13,6 +13,7 @@ import type {
 import { RelationTypes, UITypes, isLinksOrLTAR, isSystemColumn, isVirtualCol } from 'nocodb-sdk'
 import { isString } from '@vue/shared'
 import { useTitle } from '@vueuse/core'
+import type { RuleObject } from 'ant-design-vue/es/form'
 import { filterNullOrUndefinedObjectProperties } from '~/helpers/parsers/parserHelpers'
 import {
   NcErrorType,
@@ -40,7 +41,6 @@ import {
   watch,
 } from '#imports'
 import type { SharedViewMeta } from '#imports'
-import type { RuleObject } from 'ant-design-vue/es/form'
 
 const useForm = Form.useForm
 
