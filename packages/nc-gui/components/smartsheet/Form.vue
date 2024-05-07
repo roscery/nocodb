@@ -9,7 +9,6 @@ import {
   type AttachmentResType,
   ProjectRoles,
   RelationTypes,
-  StringValidationType,
   UITypes,
   ViewTypes,
   getSystemColumns,
