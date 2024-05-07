@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { UITypes, isSystemColumn } from 'nocodb-sdk'
 import type { ColumnType, TableType } from 'nocodb-sdk'
+import { UITypes, isSystemColumn } from 'nocodb-sdk'
 import {
   ActiveViewInj,
   ReloadViewDataHookInj,
@@ -72,7 +72,7 @@ const onSelectOption = (column: ColumnType) => {
 
 <template>
   <div
-    class="flex flex-row border-1 rounded-lg h-8 xs:(h-10 ml-0) ml-1 border-gray-200 overflow-hidden focus-within:border-primary"
+    class="flex flex-row border-1 rounded-lg h-7 xs:(h-10 ml-0) ml-1 border-gray-200 overflow-hidden focus-within:border-primary"
     :class="{ 'border-primary': search.query.length !== 0 }"
   >
     <NcDropdown
