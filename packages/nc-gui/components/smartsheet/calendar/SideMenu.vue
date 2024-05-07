@@ -298,7 +298,6 @@ onUnmounted(() => {
   >
     <div
       :class="{
-        '!hidden': width <= 1440,
         'px-3 py-3 ': activeCalendarView === ('day' as const) || activeCalendarView === ('week' as const),
       }"
       class="flex flex-col"
@@ -308,6 +307,7 @@ onUnmounted(() => {
         v-model:active-dates="activeDates"
         v-model:page-date="pageDate"
         v-model:selected-date="selectedDate"
+        :hide-calendar="width <= 1440"
       />
       <NcDateWeekSelector
         v-else-if="activeCalendarView === ('week' as const)"
@@ -315,17 +315,20 @@ onUnmounted(() => {
         v-model:page-date="pageDate"
         v-model:selected-week="selectedDateRange"
         is-week-picker
+        :hide-calendar="width <= 1440"
       />
       <NcMonthYearSelector
         v-else-if="activeCalendarView === ('month' as const)"
         v-model:page-date="pageDate"
         v-model:selected-date="selectedMonth"
+        :hide-calendar="width <= 1440"
       />
       <NcMonthYearSelector
         v-else-if="activeCalendarView === ('year' as const)"
         v-model:page-date="pageDate"
         v-model:selected-date="selectedDate"
         is-year-picker
+        :hide-calendar="width <= 1440"
       />
     </div>
 
