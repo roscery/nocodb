@@ -18,6 +18,7 @@ import {
   ref,
   useAttachment,
   useDropZone,
+  useRoles,
   useSelectedCellKeyupListener,
   useSmartsheetRowStoreOrThrow,
   useSmartsheetStoreOrThrow,
@@ -75,6 +76,7 @@ const {
   selectedImage,
   isReadonly,
   storedFiles,
+  removeFile,
 } = useProvideAttachmentCell(updateModelValue)
 
 const { dragging } = useSortable(sortableRef, visibleItems, updateModelValue, isReadonly)
@@ -82,6 +84,8 @@ const { dragging } = useSortable(sortableRef, visibleItems, updateModelValue, is
 const active = inject(ActiveCellInj, ref(false))
 
 const { state: rowState } = useSmartsheetRowStoreOrThrow()
+
+const { isUIAllowed } = useRoles()
 
 const { isOverDropZone } = useDropZone(currentCellRef as any, onDrop)
 
@@ -282,7 +286,7 @@ const keydownSpace = (e: KeyboardEvent) => {
             </template>
             <div v-if="isImage(item.title, item.mimetype ?? item.type)">
               <div
-                class="nc-attachment flex items-center flex-col flex-wrap justify-center"
+                class="nc-attachment flex items-center flex-col flex-wrap justify-center relative"
                 :class="{ 'ml-2': active }"
                 @click="() => onImageClick(item)"
               >
@@ -298,6 +302,12 @@ const keydownSpace = (e: KeyboardEvent) => {
                     'h-20.8 !w-30': isForm || isExpandedForm || rowHeight === 6,
                   }"
                   :srcs="getPossibleAttachmentSrc(item)"
+                />
+                <component
+                  :is="iconMap.closeCircle"
+                  v-if="isSharedForm || (isUIAllowed('dataEdit') && !isPublic)"
+                  class="absolute right-[2px] top-[2px] bg-white rounded-full"
+                  @click.stop="removeFile(i)"
                 />
               </div>
             </div>
