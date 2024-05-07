@@ -52,6 +52,7 @@ interface Props {
   closeAfterSave?: boolean
   newRecordHeader?: string
   skipReload?: boolean
+  newRecordSubmitBtnText?: string
 }
 
 const props = defineProps<Props>()
@@ -908,7 +909,7 @@ export default {
                 size="medium"
                 @click="save"
               >
-                <div class="xs:px-1">Save</div>
+                <div class="xs:px-1">{{ newRecordSubmitBtnText ?? 'Save' }}</div>
               </NcButton>
             </div>
           </div>
