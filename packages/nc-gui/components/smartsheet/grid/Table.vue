@@ -1934,6 +1934,7 @@ onKeyStroke('ArrowDown', onDown)
                       :class="{
                         'active-row': activeCell.row === rowIndex || selectedRange._start?.row === rowIndex,
                         'mouse-down': isGridCellMouseDown || isFillMode,
+                        'selected-row': row.rowMeta.selected,
                       }"
                       :style="{ height: rowHeight ? `${rowHeightInPx[`${rowHeight}`]}px` : `${rowHeightInPx['1']}px` }"
                       :data-testid="`grid-row-${rowIndex}`"
@@ -2114,22 +2115,7 @@ onKeyStroke('ArrowDown', onDown)
                         :data-col-index="colIndex"
                         @mousedown="handleMouseDown($event, rowIndex, colIndex)"
                         @mouseover="handleMouseOver($event, rowIndex, colIndex)"
-                        @click="
-                          ($event) => {
-                            handleCellClick($event, rowIndex, colIndex)
-                            console.log(
-                              'fdsa',
-                              colMeta[colIndex],
-                              (colMeta[colIndex].isLookup ||
-                                colMeta[colIndex].isRollup ||
-                                colMeta[colIndex].isFormula ||
-                                colMeta[colIndex].isCreatedOrLastModifiedTimeCol ||
-                                colMeta[colIndex].isCreatedOrLastModifiedByCol) &&
-                                hasEditPermission &&
-                                selectRangeMap[`${rowIndex}-${colIndex}`],
-                            )
-                          }
-                        "
+                        @click="handleCellClick($event, rowIndex, colIndex)"
                         @dblclick="makeEditable(row, columnObj)"
                         @contextmenu="showContextMenu($event, { row: rowIndex, col: colIndex })"
                       >
@@ -2487,7 +2473,7 @@ onKeyStroke('ArrowDown', onDown)
 
   td,
   th {
-    @apply border-gray-100 border-solid border-r bg-gray-50 p-0;
+    @apply border-gray-100 border-solid border-r bg-gray-100 p-0;
     min-height: 32px !important;
     height: 32px !important;
     position: relative;
@@ -2742,9 +2728,18 @@ onKeyStroke('ArrowDown', onDown)
       @apply !xs:hidden flex;
     }
 
+    &:not(.selected-row) {
+      td.nc-grid-cell:not(.active),
+      td:nth-child(2):not(.active) {
+        @apply !bg-gray-50 border-b-gray-200 border-r-gray-200;
+      }
+    }
+  }
+
+  &.selected-row {
     td.nc-grid-cell:not(.active),
     td:nth-child(2):not(.active) {
-      @apply !bg-gray-50 border-b-gray-200 border-r-gray-200;
+      @apply !bg-[#F0F3FF] border-b-gray-200 border-r-gray-200;
     }
   }
 }
