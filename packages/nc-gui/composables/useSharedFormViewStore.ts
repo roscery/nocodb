@@ -292,8 +292,6 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
         return
       }
 
-      console.log('after')
-
       progress.value = true
       const data: Record<string, any> = { ...formState.value, ...additionalState.value }
       const attachment: Record<string, any> = {}
