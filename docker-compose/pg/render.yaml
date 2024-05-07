@@ -1,0 +1,36 @@
+services:
+  nocodb:
+    env:
+      - key: NC_DB
+        value: pg://root_db:5432?u=postgres&p=password&d=root_db
+    image: nocodb/nocodb:latest
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - name: nc_data
+        path: /usr/app/data
+    depends_on:
+      - root_db
+  root_db:
+    env:
+      - key: POSTGRES_DB
+        value: root_db
+      - key: POSTGRES_PASSWORD
+        value: password
+      - key: POSTGRES_USER
+        value: postgres
+    healthcheck:
+      interval: 10s
+      retries: 10
+      test: pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+      timeout: 2s
+    image: postgres
+    restart: always
+    volumes:
+      - name: db_data
+        path: /var/lib/postgresql/data
+
+volumes:
+  db_data: {}
+  nc_data: {}
