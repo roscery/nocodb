@@ -10,13 +10,13 @@ import {
   type ColumnType,
   ProjectRoles,
   RelationTypes,
+  StringValidationType,
   UITypes,
   ViewTypes,
   getSystemColumns,
   isLinksOrLTAR,
   isSelectTypeCol,
   isVirtualCol,
-  StringValidationType,
 } from 'nocodb-sdk'
 import type { Permission } from '#imports'
 import {
