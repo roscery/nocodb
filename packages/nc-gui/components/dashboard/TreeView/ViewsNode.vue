@@ -243,7 +243,7 @@ watch(isDropdownOpen, async () => {
           @emoji-selected="emits('selectIcon', $event)"
         >
           <template #default>
-            <GeneralViewIcon :meta="props.view" class="nc-view-icon"></GeneralViewIcon>
+            <GeneralViewIcon :meta="props.view" class="nc-view-icon w-4"></GeneralViewIcon>
           </template>
         </LazyGeneralEmojiPicker>
       </div>
