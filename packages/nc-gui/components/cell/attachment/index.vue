@@ -18,7 +18,6 @@ import {
   ref,
   useAttachment,
   useDropZone,
-  useRoles,
   useSelectedCellKeyupListener,
   useSmartsheetRowStoreOrThrow,
   useSmartsheetStoreOrThrow,
@@ -84,8 +83,6 @@ const { dragging } = useSortable(sortableRef, visibleItems, updateModelValue, is
 const active = inject(ActiveCellInj, ref(false))
 
 const { state: rowState } = useSmartsheetRowStoreOrThrow()
-
-const { isUIAllowed } = useRoles()
 
 const { isOverDropZone } = useDropZone(currentCellRef as any, onDrop)
 
