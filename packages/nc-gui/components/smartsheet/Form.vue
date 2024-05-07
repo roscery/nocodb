@@ -1711,7 +1711,7 @@ useEventListener(
   &.layout-list {
     @apply h-auto !pl-0 !py-1;
   }
-  &.nc-cell-rating,
+
   &.nc-cell-geodata {
     @apply !py-1;
   }
