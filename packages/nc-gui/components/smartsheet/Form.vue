@@ -3,7 +3,6 @@ import Draggable from 'vuedraggable'
 import tinycolor from 'tinycolor2'
 import { Pane, Splitpanes } from 'splitpanes'
 import 'splitpanes/dist/splitpanes.css'
-import type { FormItemProps } from 'ant-design-vue'
 
 import {
   type AttachmentResType,
