@@ -497,5 +497,11 @@ const onFilterChange = () => {
       @apply text-gray-600;
     }
   }
+  
+  input {
+    &::placeholder {
+      @apply text-gray-500;
+    }
+  }
 }
 </style>
