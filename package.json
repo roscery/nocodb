@@ -46,7 +46,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vue": "3.3.13",
+      "vue": "3.4.27",
       "typescript": "latest",
       "ajv@<6.12.3": ">=6.12.3",
       "node.extend@<1.1.7": ">=1.1.7",
