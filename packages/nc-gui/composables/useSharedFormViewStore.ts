@@ -41,6 +41,9 @@ import {
   watch,
 } from '#imports'
 import type { SharedViewMeta } from '#imports'
+import type { RuleObject } from 'ant-design-vue/es/form'
+
+const useForm = Form.useForm
 
 const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((sharedViewId: string) => {
   const progress = ref(false)
@@ -148,9 +151,13 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
             !/^\w+\(\)|CURRENT_TIMESTAMP$/.test(c.cdf)
           ) {
             const defaultValue = typeof c.cdf === 'string' ? c.cdf.replace(/^'|'$/g, '') : c.cdf
-
-            formState.value[c.title] = defaultValue
-            preFilledDefaultValueformState.value[c.title] = defaultValue
+            if ([UITypes.Number, UITypes.Duration, UITypes.Percent, UITypes.Currency, UITypes.Decimal].includes(c.uidt)) {
+              formState.value[c.title] = Number(defaultValue) || null
+              preFilledDefaultValueformState.value[c.title] = Number(defaultValue) || null
+            } else {
+              formState.value[c.title] = defaultValue
+              preFilledDefaultValueformState.value[c.title] = defaultValue
+            }
           }
 
           return {
@@ -186,6 +193,7 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
 
       handlePreFillForm()
     } catch (e: any) {
+      console.log('err', e)
       const error = await extractSdkResponseErrorMsgv2(e)
 
       if (e.response && e.response.status === 404) {
@@ -203,7 +211,7 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
     }
   }
 
-  const validators = computed(() => {
+  const validators1 = computed(() => {
     const obj: Record<string, Record<string, any>> = {
       localState: {},
       virtual: {},
@@ -273,15 +281,83 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
     return obj
   })
 
+  const validators = computed(() => {
+    const rulesObj: Record<string, RuleObject[]> = {}
+
+    if (!formColumns.value) return rulesObj
+
+    for (const column of formColumns.value) {
+      let rules: RuleObject[] = []
+
+      if (
+        !isVirtualCol(column) &&
+        ((column.rqd && !column.cdf) || (column.pk && !(column.ai || column.cdf)) || column.required)
+      ) {
+        rules.push({
+          required: true,
+          message: t('msg.error.fieldRequired', { value: 'This field' }),
+          ...(column.uidt === UITypes.Checkbox ? { type: 'enum', enum: [1, true] } : {}),
+        })
+      } else if (
+        isLinksOrLTAR(column) &&
+        column.colOptions &&
+        (column.colOptions as LinkToAnotherRecordType).type === RelationTypes.BELONGS_TO
+      ) {
+        const col = columns.value?.find((c) => c.id === (column?.colOptions as LinkToAnotherRecordType)?.fk_child_column_id)
+
+        if ((col && col.rqd && !col.cdf) || column.required) {
+          if (col) {
+            rules.push({
+              required: true,
+              message: t('msg.error.fieldRequired', { value: 'This field' }),
+            })
+          }
+        }
+      } else if (isVirtualCol(column) && column.required) {
+        rules.push({
+          required: true,
+          message: t('msg.error.fieldRequired', { value: 'This field' }),
+          min: 1,
+        })
+      }
+
+      const additionalRules = extractFieldValidator(parseProp(column.meta).validators ?? [], column)
+      rules = [...rules, ...additionalRules]
+
+      if (rules.length) {
+        rulesObj[column.title] = rules
+      }
+    }
+
+    return rulesObj
+  })
+
   const v$ = useVuelidate(
-    validators,
+    validators1,
     computed(() => ({ localState: formState.value, virtual: additionalState.value })),
   )
 
+  const validationFieldState = computed(() => {
+    return { ...formState.value, ...additionalState.value }
+  })
+
+  const { validate, validateInfos, validateField, clearValidate } = useForm(validationFieldState, validators)
+
+  const validateAllFields = async () => {
+    try {
+      await validate(Object.keys({ ...formState.value, ...additionalState.value }))
+      return true
+    } catch (e: any) {
+      if (e.errorFields.length) {
+        message.error(t('msg.error.someOfTheRequiredFieldsAreEmpty'))
+        return false
+      }
+    }
+  }
+
   const submitForm = async () => {
     try {
-      if (!(await v$.value?.$validate())) {
-        message.error(t('msg.error.someOfTheRequiredFieldsAreEmpty'))
+      if (!(await validateAllFields())) {
         return
       }
 
@@ -326,7 +402,8 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
       ...preFilledDefaultValueformState.value,
       ...(sharedViewMeta.value.preFillEnabled ? preFilledformState.value : {}),
     }
-    v$.value?.$reset()
+
+    clearValidate()
   }
 
   function handlePreFillForm() {
@@ -370,7 +447,7 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
   }
 
   function getColAbstractType(c: ColumnType) {
-    return (c?.source_id ? sqlUis.value[c?.source_id] : Object.values(sqlUis.value)[0]).getAbstractType(c)
+    return (c?.source_id ? sqlUis.value[c?.source_id] : Object.values(sqlUis.value)[0])?.getAbstractType(c)
   }
 
   function getPreFillValue(c: ColumnType, value: string) {
@@ -438,9 +515,9 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
         break
       }
       case UITypes.Checkbox: {
-        if (['true', '1'].includes(value.toLowerCase())) {
+        if (['true', true, '1', 1].includes(value.toLowerCase())) {
           preFillValue = true
-        } else if (['false', '0'].includes(value.toLowerCase())) {
+        } else if (['false', false, '0', 0].includes(value.toLowerCase())) {
           preFillValue = false
         }
         break
@@ -559,6 +636,20 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
     },
   )
 
+  watch(
+    additionalState.value,
+    async () => {
+      try {
+        await validate(Object.keys(additionalState.value))
+      } catch (e: any) {
+        e.errorFields.map((f: Record<string, any>) => console.error(f.errors.join(',')))
+      }
+    },
+    {
+      deep: true,
+    },
+  )
+
   return {
     sharedView,
     sharedFormView,
@@ -581,6 +672,11 @@ const [useProvideSharedFormStore, useSharedFormStore] = useInjectionState((share
     isLoading,
     sharedViewMeta,
     onReset: formResetHook.on,
+    validate,
+    validateInfos,
+    validateField,
+    clearValidate,
+    additionalState,
   }
 }, 'shared-form-view-store')
 

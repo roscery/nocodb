@@ -25,5 +25,6 @@ export * from './cell'
 export * from './workerUtils'
 export * from './parsersUtils'
 export * from './datetimeUtils'
+export * from './formValidations'
 
 export const isEeUI = false
