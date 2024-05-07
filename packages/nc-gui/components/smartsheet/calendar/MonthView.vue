@@ -18,6 +18,8 @@ const {
   updateRowProperty,
 } = useCalendarViewStoreOrThrow()
 
+const { $e } = useNuxtApp()
+
 const isMondayFirst = ref(true)
 
 const { isUIAllowed } = useRoles()
@@ -546,6 +548,8 @@ const stopDrag = (event: MouseEvent) => {
   updateRowProperty(newRow, updateProperty, false)
   focusedDate.value = null
 
+  $e('c:calendar:month:drag-record')
+
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', stopDrag)
 }
@@ -613,6 +617,7 @@ const dropEvent = (event: DragEvent) => {
       dragElement.value = null
     }
     updateRowProperty(newRow, updateProperty, false)
+    $e('c:calendar:day:drag-record')
   }
 }
 

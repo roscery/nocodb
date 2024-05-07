@@ -90,7 +90,7 @@ const [useProvideCalendarViewStore, useCalendarViewStore] = useInjectionState(
 
     const { base } = storeToRefs(useBase())
 
-    const { $api } = useNuxtApp()
+    const { $api, $e } = useNuxtApp()
 
     const { t } = useI18n()
 
@@ -396,6 +396,8 @@ const [useProvideCalendarViewStore, useCalendarViewStore] = useInjectionState(
     }
 
     const changeCalendarView = async (view: 'month' | 'year' | 'day' | 'week') => {
+      $e('c:calendar:change-calendar-view', view)
+
       try {
         activeCalendarView.value = view
         await updateCalendarMeta({
@@ -779,6 +781,7 @@ const [useProvideCalendarViewStore, useCalendarViewStore] = useInjectionState(
     })
 
     watch(sideBarFilterOption, async () => {
+      $e('a:calendar:sidebar-filter', sideBarFilterOption.value)
       await loadSidebarData()
     })
 
