@@ -305,7 +305,7 @@ const keydownSpace = (e: KeyboardEvent) => {
                 />
                 <component
                   :is="iconMap.closeCircle"
-                  v-if="isSharedForm || (isUIAllowed('dataEdit') && !isPublic)"
+                  v-if="isForm"
                   class="absolute right-[2px] top-[2px] bg-white rounded-full"
                   @click.stop="removeFile(i)"
                 />
