@@ -1735,7 +1735,7 @@ useEventListener(
     @apply p-2;
   }
   &.nc-virtual-cell {
-    @apply px-2 py-1;
+    @apply px-2 py-1 min-h-10;
   }
 
   &.nc-cell-json {
